@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link type="text/css" rel="stylesheet" media="screen" href="css/welcome.css"/>
+        <link type="text/css" rel="stylesheet" media="screen" href="css/layoutRodape.css"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -85,10 +86,38 @@
 
                       </script>
         </div>
-        <!--X CONTEUDO X-->
-        <img src="{{asset('img_home/trabalhador1.jpg')}}" height: "100%" width="100%">
-        <!-- RODAPE -->
-        <!--X RODAPE X-->
-
+        {{-- Imagem de fundo --}}
+        <div id="SLIDE_BG"></div>
+        <div>
+            <div class="container_backgound_color"> <!--cor do fundo: cinza-->
+                <div class="container">
+                    <div id="logo_rodape">
+                        <a id="text_logo">Colinas Jobs</a>
+                    </div>
+                    <div id="institucional">
+                        <p>Institucional</p>
+                        <a>Quem somos?</a> <br>
+                        <a>Por que usar Colinas Jobs?</a> <br>
+                        <a>Aviso legal</a> <br>
+                        <a>Politica de privacidade</a> <br>
+                    </div>
+                    <div id="candidato">
+                        <p>Candidato</p>
+                        <a>Ajuda para candidato</a> <br>
+                        <a>Anunciar currículo</a> <br>
+                        <a>Busca de emprego</a> <br>
+                    </div>
+                    <div id="empresa">
+                        <p>Empresa</p>
+                        <a>Ajuda para empresas</a> <br>
+                        <a>Anunciar vagas de emprego</a> <br>
+                        <a>Busque candidatos</a> <br>
+                    </div>
+                    </div>
+            </div>
+            <div class="container_rodape_credito">
+                <p class="texto_rodape_credito"> Copyright © 2019 - Colinas Jobs. Todos os direitos reservados.</p>
+            </div>
+        </div>
     </body>
 </html>

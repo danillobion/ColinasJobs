@@ -74,5 +74,4 @@
         </div>
     </div>
 </div>
-<img style="width:100%; height:100%;" src="{{asset('img_home/trabalhador1.jpg')}}">
 @endsection
