@@ -76,6 +76,10 @@ Route::group(['middleware' => 'verifica_email'], function(){
 
         Route::get('/atualizarEscolaridade', 'CandidatoController@atualizarEscolaridade')->name('atualizarEscolaridade');
 
+        Route::get('/adicionarEAtualizarEscolaridade', 'CandidatoController@adicionarEAtualizarEscolaridade')->name('adicionarEAtualizarEscolaridade');
+
+        Route::get('/deletarEscolaridade', 'CandidatoController@deletarEscolaridade')->name('deletarEscolaridade');
+
         Route::get('/atualizarExperiencia', 'CandidatoController@atualizarExperiencia')->name('atualizarExperiencia');
 
         Route::get('/resultadoOportunidade', 'EmpresaController@buscarOportunidade')->name('buscarOportunidade');
@@ -83,6 +87,10 @@ Route::group(['middleware' => 'verifica_email'], function(){
         Route::get('/adicionarMatch', 'CandidatoController@adicionarMatch')->name('adicionarMatch');
 
         Route::get('/removerInteresseNaVaga', 'CandidatoController@removerInteresseNaVaga')->name('removerInteresseNaVaga');
+
+        Route::get('/removerInteresseNaVagaViewLista', 'CandidatoController@removerInteresseNaVagaViewLista')->name('removerInteresseNaVagaViewLista');
+
+        Route::get('/listar_tenho_interesse', 'CandidatoController@listarMeuInteresse')->name('listarMeuInteresse');
 
 
         #Empresa
@@ -99,8 +107,7 @@ Route::group(['middleware' => 'verifica_email'], function(){
 
         Route::get('/resultadoCandidato', 'CandidatoController@buscarCandidato') ->name('buscarCandidato');
 
-        Route::get('/tenhoInteresseNoCandidato', 'CandidatoController@tenhoInteresseNoCandidato')->name('tenhoInteresseNoCandidato');
+        Route::post('/interessenocandidato', 'EmpresaController@interesseNoCandidato')->name('interesseNoCandidato');
 
-        Route::get('/naoTenhoInteresseNoCandidato', 'CandidatoController@naoTenhoInteresseNoCandidato')->name('naoTenhoInteresseNoCandidato');
-
+        Route::get('/principalempresa', 'EmpresaController@principalEmpresa')->name('principal_empresa');
 });

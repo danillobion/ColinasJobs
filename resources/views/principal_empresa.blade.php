@@ -174,6 +174,82 @@
                                                 @endforeach
                                             </div>
                                         <hr/>
+                                        <div>
+                                            @if($item->vaga[$i]->match[$j]->match === NULL )
+                                                <div class="btn-group">
+                                                    <div>
+                                                        <form action="{{route('interesseNoCandidato')}}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
+                                                            <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
+                                                            <input type="hidden" name="match" value="TRUE">
+                                                            <button type="submit" style="background-color:blue;  border: none;
+                                                            border-radius: 8px;
+                                                            color: white;
+                                                            padding: 4px 11px;
+                                                            text-align: center;
+                                                            text-decoration: none;
+                                                            display: inline-block;
+                                                            font-size: 13px;
+                                                            margin: 4px 2px;
+                                                            cursor: pointer;">Tenho Interesse</button>
+                                                        </form>
+                                                    </div>
+                                                    <div class="margin-left:50px;">
+                                                        <form action="{{route('interesseNoCandidato')}}" method="POST">
+                                                            @csrf
+                                                            <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
+                                                            <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
+                                                            <input type="hidden" name="match" value="FALSE">
+                                                            <button type="submit" style="background-color:red;  border: none;
+                                                            border-radius: 8px;
+                                                            color: white;
+                                                            padding: 4px 11px;
+                                                            text-align: center;
+                                                            text-decoration: none;
+                                                            display: inline-block;
+                                                            font-size: 13px;
+                                                            margin: 4px 2px;
+                                                            cursor: pointer;">Não Tenho Interesse</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            @elseif($item->vaga[$i]->match[$j]->match === FALSE)
+                                                <form action="{{route('interesseNoCandidato')}}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
+                                                    <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
+                                                    <input type="hidden" name="match" value="TRUE">
+                                                    <button type="submit" style="background-color:blue;  border: none;
+                                                    border-radius: 8px;
+                                                    color: white;
+                                                    padding: 4px 11px;
+                                                    text-align: center;
+                                                    text-decoration: none;
+                                                    display: inline-block;
+                                                    font-size: 13px;
+                                                    margin: 4px 2px;
+                                                    cursor: pointer;">Tenho Interesse</button>
+                                                </form>
+                                            @else
+                                                <form action="{{route('interesseNoCandidato')}}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
+                                                    <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
+                                                    <input type="hidden" name="match" value="FALSE">
+                                                    <button type="submit" style="background-color:red;  border: none;
+                                                    border-radius: 8px;
+                                                    color: white;
+                                                    padding: 4px 11px;
+                                                    text-align: center;
+                                                    text-decoration: none;
+                                                    display: inline-block;
+                                                    font-size: 13px;
+                                                    margin: 4px 2px;
+                                                    cursor: pointer;">Não Tenho Interesse</button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </div>
                                 @endfor
                             @endfor

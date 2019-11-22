@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Match extends Model
 {
-    protected $fillable = ['candidato_id','vaga_id'];
+    protected $fillable = ['candidato_id','vaga_id', 'empresa_id','match'];
 
     public function candidato(){
         return $this->belongsTo('App\Candidato', 'candidato_id');

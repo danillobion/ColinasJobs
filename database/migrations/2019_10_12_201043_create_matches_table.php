@@ -18,6 +18,7 @@ class CreateMatchesTable extends Migration
             $table->integer('candidato_id');
             $table->integer('vaga_id');
             $table->integer('empresa_id')->nullable();
+            $table->boolean('match')->nullable();
             $table->timestamps();
         });
     }

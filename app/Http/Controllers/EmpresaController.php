@@ -136,32 +136,45 @@ class EmpresaController extends Controller
         'complemento'=>$request->complemento,
     ]);
 
-    return redirect()->route('home');//view('principal_empresa');
-  }
-  public function tenhoInteresseNoCandidato(Request $request){
-    dd($request);
-    $this->validate($request,[
-        'candidato_id'               =>  'required',
-        'empresa_id'                 =>  'required',
-    ]);
-
-        Match::create([
-            'candidato_id'         => Auth::user()->empresa->id,
-            'empresa_id'           => $request->vaga_id,
-        ]);
-        return redirect()->route('home');//view('principal_candidato');
-
     return redirect()->route('home');
   }
-  public function naoTenhoInteresseNoCandidato(Request $request){
-    dd($request);
+
+  /*
+  * FUNCAO: Empresa tem interesse ou não no candidato
+  * TIPO: POST
+  * VIEW: principal_empresa
+  */
+  public function interesseNoCandidato(Request $request){
     $this->validate($request,[
-        'candidato_id'               =>  'required',
-        'empresa_id'                 =>  'required',
+        'candidato_id'             =>  'required',
+        'vaga_id'                  =>  'required',
     ]);
-    // $resultado = Match::where('candidato_id',Auth::user()->candidato->id)->where('vaga_id',$request->vaga_id)->delete();
-    return redirect()->route('home');
+
+    DB::table('matches')
+    ->where('candidato_id','like', $request->candidato_id)
+    ->where('vaga_id','like',$request->vaga_id)
+    ->update(['empresa_id'=> Auth::user()->empresa->id, 'match'=>$request->match]);
+
+    return redirect()->route('principal_empresa');
+
   }
+  /*
+  * FUNCAO: Carregar view principal do usuario empresa
+  * TIPO: GET
+  * VIEW: principal_empresa
+  */
+  public function principalEmpresa(){
+    $resultado = Empresa::where('user_id',Auth::user()->id)->get();
+
+    $resultadoMatches = DB::table('vagas')
+    ->join('matches','vagas.id','=','matches.vaga_id')
+    ->where('vagas.empresa_id','=',Auth::user()->id)
+    ->get();
+
+    return view('principal_empresa', ['empresas'=>$resultado, 'vagas'=>$resultadoMatches]);
+
+  }
+
   public function buscarOportunidade(Request $request){
     //$empresas = Empresa::where('nome_empresa', 'like', '%' . strtolower($request->busca) . '%')-> paginate(10);
         // $resultado = DB::table('empresas')
