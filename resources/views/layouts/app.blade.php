@@ -77,6 +77,12 @@
                                                 <div style="margin-left:6px; margin-top:3px;">{{ __('Meu Currículo') }}</div>
                                             </div>
                                         </a>
+                                        <a class="dropdown-item" href="{{ route('listarMeuInteresse') }}">
+                                            <div class="btn-group">
+                                                <div style="padding-left: 2%"></div>
+                                                <div style="margin-left:6px; margin-top:3px;">{{ __('Tenho Interesse') }}</div>
+                                            </div>
+                                        </a>
                                     <hr>
                                     @elseif(!is_null( Auth::user()->empresa))
                                         <a class="dropdown-item" href="{{ route('vaga') }}">
