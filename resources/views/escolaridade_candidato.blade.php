@@ -1,181 +1,260 @@
 @extends('layouts.app')
 @section('content')
+
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8" style="position: absolute; padding-top: 7.0rem; padding: 90px;">
-            <div class="card" style="-webkit-box-shadow: 0px -1px 13px 4px rgba(0,0,0,0.17);
-            -moz-box-shadow: 0px -1px 13px 4px rgba(0,0,0,0.17);
-            box-shadow: 0px -1px 13px 4px rgba(0,0,0,0.17);">
-                <div class="card-body" style="padding:2rem;">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
+        <div  style="padding-top:80px">
+            <div class="card">
+                <div class="card-body">
+                        @if (session('status'))
+                            <div class="alert alert-success" role="alert">
+                                {{ session('status') }}
+                            </div>
+                        @endif
+                        <div style="padding:1%; float:right;">
+                            <button type="button"  class="btn btn-primary" onclick="adicionarAtualizarEscolaridade('adicionar','new','new','new','new','new');" class="btn btn-warning" data-toggle="modal" data-target="#adicionarEditarEscolaModal">Adicionar Nova Escolaridade</button>
                         </div>
-                    @endif
-                    <div class="form-group">
-                        <?php if(!is_null($escolaridades)){ ?>
-                            @if(count($escolaridades)==0)
-                                <form action="{{route('adicionarEscolaridade')}}" id="form2"> {{--Vou pra rota atualizaarMiniCuriculo se o objeto $candidato existir--}}
-                            @endif
-                                <form action="{{route('atualizarEscolaridade')}}" id="form2"> {{--Vou pra rota atualizaarMiniCuriculo se o objeto $candidato existir--}}
-                        <?php } ?>
-                            <center style="font-family: Times New Roman, Times, serif; font-size:25px; 'width':100%; height:30px; color:black; margin-top:20px;">Escolaridade</center><br>
-                            <div class="btn-group">
-                                <div>
-                                    <p style="font-family: 'Courgette', cursive; font-size:19px; color:#f69552; margin-top:20px; width:200px;">A Escolaridade é uma parte essencial na hora de avaliar um candidato.</p>
-                                </div>
-                                <div style="height: 185px;border-left: 1px solid;color:#d3d3d3; margin-top:5px;">
-                                </div>
-                                <div class="form-group" style="margin-left:20px; margin-top:15px;">
-                                    <div >
-                                        <label for="entradaInstituicao">Instituição<a style="color:red"> *</a></label>
-
-                                            <?php if(!is_null($escolaridades)){ ?>
-                                                @if(count($escolaridades)==0)
-                                                    <input type="text" name="instituicao" class="@error('instituicao') is-invalid @enderror form-control" value="{{ old('instituicao') }}" style="width:400px;" id="instituicao" aria-describedby="emailHelp" placeholder="Digite o nome do bairro">
-                                                @endif
-                                                @foreach ($escolaridades as $item)
-                                                    <input type="text" name="instituicao" class="@error('instituicao') is-invalid @enderror form-control" value="{{ $item->instituicao }}" style="width:400px;" id="instituicao" aria-describedby="emailHelp" placeholder="Digite o nome do bairro">
-                                                @endforeach
-
-                                            <?php } ?>
-
-                                        <small id="instituicao" class="form-text text-muted">ex.: Universidade Federal Rural de Pernambuco</small>
-                                        @error('instituicao')
-                                            <div >
-                                                <a style="color:red;">{{ $message }}</a>
+                        <div>
+                            <table class="table table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Instituição</th>
+                                    <th scope="col">Curso</th>
+                                    <th scope="col">Opções</th>
+                                    </tr>
+                                </thead>
+                                <?php $idTemp =-1; ?>
+                                @foreach ($escolaridades as $item)
+                                    <?php $idTemp++; ?>
+                                    <tbody>
+                                        <tr>
+                                        <th scope="row">{{$idTemp+1}}</th>
+                                        <td>{{$item->instituicao}}</td>
+                                        <td>{{$item->curso}}</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <div>
+                                                    <button type="button" onclick="adicionarAtualizarEscolaridade('atualizar','{{$item->id}}','{{$item->nivel_educacional}}','{{$item->instituicao}}','{{$item->curso}}','{{$item->data_conclusao}}');" class="btn btn-warning" data-toggle="modal" data-target="#adicionarEditarEscolaModal">Editar</button>
+                                                </div>
+                                                <div style="margin-left:30px;">
+                                                    <form action="{{route('deletarEscolaridade')}}" >
+                                                        <input type="hidden" id="idAtualizar" name="escolaridade_id" value="{{$item->id}}">
+                                                        <button type="submit" class="btn btn-danger">Deletar</button>
+                                                    </form>
+                                                </div>
                                             </div>
-                                        @enderror
+                                        </td>
+                                        </tr>
+                                    </tbody>
+                                @endforeach
+                            </table>
+                        </div>
+                </div>
+                {{-- Modal para Adicionar e Editar uma escolaridade --}}
+                <div class="modal fade" id="adicionarEditarEscolaModal" style="padding-top:70px" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Editar Escolaridade</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="recipient-name" class="col-form-label">Nível de Formação:</label>
+                            <form action="{{route('adicionarEAtualizarEscolaridade')}}" >
+                                    <select class="form-control" style="width:230px; margin-top:10px" name="nivel_educacional" id="editarEsc">
+                                        <option id="opcaoTeste0" value="Selecione">Selecione...</option>
+                                        <option id="opcaoTeste1" value="Ensino Fundamental Completo">Ensino Fundamental Completo</option>
+                                        <option id="opcaoTeste2" value="Ensino Médio Incompleto">Ensino Médio Incompleto</option>
+                                        <option id="opcaoTeste3" value="Ensino Médio Completo">Ensino Médio Completo</option>
+                                        <option id="opcaoTeste4" value="Técnico/Pós-Médio Incompleto">Técnico/Pós-Médio Incompleto</option>
+                                        <option id="opcaoTeste5" value="Técnico/Pós-Médio Completo">Técnico/Pós-Médio Completo</option>
+                                        <option id="opcaoTeste6" value="Técnólogo Incompleto">Técnólogo Incompleto</option>
+                                        <option id="opcaoTeste7" value="Técnólogo Completo">Técnólogo Completo</option>
+                                        <option id="opcaoTeste8" value="Superior Incompleto">Superior Incompleto</option>
+                                        <option id="opcaoTeste9" value="Superior Completo">Superior Completo</option>
+                                    </select>
+                                    {{-- id da escolaridade --}}
+                                    <input type="hidden" id="idEscolaridadeAdicionada" name="escolaridade_id" value="">
+                                    <input type="hidden" id="idFlag" name="flagTemp"> {{-- idFlag é um identificador--}}
+
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Instituição:</label>
+                                    <input type="text" class="form-control" id="instituicao" name="instituicao" disabled>
                                     </div>
-                                    <div style="margin-top:20px;">
-                                            <label for="entradaCurso">Curso<a style="color:red"> *</a></label>
-
-                                            <?php if(!is_null($escolaridades)){ ?>
-                                                @if(count($escolaridades)==0)
-                                                    <input type="text" name="curso" class="@error('curso') is-invalid @enderror form-control" value="{{ old('curso') }}" style="width:400px;" id="curso" aria-describedby="emailHelp" placeholder="Digite o nome do curso">
-                                                @endif
-                                                @foreach ($escolaridades as $item)
-                                                    <input type="text" name="curso" class="@error('curso') is-invalid @enderror form-control" value="{{ $item->curso }}" style="width:400px;" id="curso" aria-describedby="emailHelp" placeholder="Digite o nome do curso">
-                                                @endforeach
-
-                                            <?php } ?>
-
-                                        <small id="instituicao" class="form-text text-muted">ex.: Universidade Federal Rural de Pernambuco</small>
-                                        @error('instituicao')
-                                            <div >
-                                                <a style="color:red;">{{ $message }}</a>
-                                            </div>
-                                        @enderror
-                                    </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Curso:</label>
+                                    <input type="text" class="form-control" id="curso" name="curso" disabled>
                                 </div>
-                            </div>
-
-                            <div class="btn-group" style="width:1020px; margin-top:20px;">
-                                <div style="margin-left:220px">
-                                    <label for="entradaDataInicio">Data de Entrada<a style="color:red"> *</a></label>
-
-                                    <?php if(!is_null($escolaridades)){ ?>
-                                        @if(count($escolaridades)==0)
-                                            <input type="date" name="data_inicio" class="@error('data_inicio') is-invalid @enderror form-control" value="{{ old('data_inicio') }}" style="width:150px;" id="curso" aria-describedby="emailHelp" placeholder=" ">
-                                        @endif
-                                        @foreach ($escolaridades as $item)
-                                            <input type="date" name="data_inicio" class="@error('data_inicio') is-invalid @enderror form-control" value="{{ $item->data_inicio }}" style="width:150px;" id="curso" aria-describedby="emailHelp" placeholder=" ">
-                                        @endforeach
-
-                                    <?php } ?>
-
-                                    <small id="data_inicio" class="form-text text-muted">ex.: dd/mm/aaaa</small>
-                                    @error('data_inicio')
-                                        <div >
-                                            <a style="color:red;">{{ $message }}</a>
-                                        </div>
-                                    @enderror
+                                <div class="form-group">
+                                    <label class="col-form-label">Ano De Conclusão:</label>
+                                    <input  class="form-control" id="anoDeConclusao" name="anodeconclusao" type="date" disabled>
                                 </div>
-                                <div style="margin-left:20px;">
-                                        <label for="entradaDataConclusao">Data de Conclusão<a style="color:red"> *</a></label>
-
-                                        <?php if(!is_null($escolaridades)){ ?>
-                                            @if(count($escolaridades)==0)
-                                                <input type="date" name="data_conclusao" class="@error('data_conclusao') is-invalid @enderror form-control" value="{{ old('data_conclusao') }}" style="width:150px;" id="curso" aria-describedby="emailHelp" placeholder=" ">
-                                            @endif
-                                            @foreach ($escolaridades as $item)
-                                                <input type="date" name="data_conclusao" class="@error('data_conclusao') is-invalid @enderror form-control" value="{{ $item->data_conclusao }}" style="width:150px;" id="curso" aria-describedby="emailHelp" placeholder=" ">
-                                            @endforeach
-
-                                        <?php } ?>
-
-                                        <small id="data_conclusao" class="form-text text-muted">ex.: dd/mm/aaaa</small>
-                                        @error('data_conclusao')
-                                            <div >
-                                                <a style="color:red;">{{ $message }}</a>
-                                            </div>
-                                        @enderror
-                                    </div>
-                            </div>
-                                <div style="margin-top:90px; margin-left:100px; margin-top:50px;">
-
-                                    <div style="position:absolute; left:510px; margin-top:-35px;">
-
-                                            <?php if(!is_null($escolaridades)){ ?>
-                                                @if(count($escolaridades)==0) {{--Verifica se o objeto candidato existe--}}
-                                                    <button type="submit"
-                                                        style="background-color:#4285f4;
-                                                        border: none;
-                                                        border-radius: 8px;
-                                                        color: white;
-                                                        padding: 8px 11px;
-                                                        text-align: center;
-                                                        text-decoration: none;
-                                                        display: inline-block;
-                                                        font-size: 13px;
-                                                        margin: 0px 2px;
-                                                        cursor: pointer;">Salvar Escolaridade
-                                                    </button>
-                                                @else
-                                                    <button type="submit"
-                                                        style="background-color:green;
-                                                        border: none;
-                                                        border-radius: 8px;
-                                                        color: white;
-                                                        padding: 8px 11px;
-                                                        text-align: center;
-                                                        text-decoration: none;
-                                                        display: inline-block;
-                                                        font-size: 13px;
-                                                        margin: 0px 2px;
-                                                        cursor: pointer;">Atualizar Escolaridade e Sair
-                                                    </button>
-                                                @endif
-                                            <?php } ?>
-                                     </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                    <button type="submit" class="btn btn-primary">Salvar</button>
                                 </div>
-                        </form>
+                            </form>
+                        </div>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <form action="{{route('abrir_painel_curriculum')}}">
-                        <div style="padding:10px; float:right;">
-                            <button type="submit">Voltar</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
             </div>
-        </div>
     </div>
 </div>
 <script>
-function yesnoCheck() {
-    if (document.getElementById('yesCheck').checked) {
-        document.getElementById('ifYes').style.visibility = 'visible';
+    function yesnoCheck() {
+        if (document.getElementById('yesCheck').checked) {
+            document.getElementById('ifYes').style.visibility = 'visible';
+        }
+        else document.getElementById('ifYes').style.visibility = 'hidden';
     }
-    else document.getElementById('ifYes').style.visibility = 'hidden';
-}
 
-var teste = function(obj)
-{
+    function aviso($texto)
+    {
 
-alert(obj.value);
+        alert($texto);
 
-}
+    }
+
+    function editarVaga(x){
+        // var aux = document.getElementById("aux").value;
+        // document.getElementById("aux").value = x;
+
+        var aux = document.getElementById("aux").value;
+            document.getElementById(aux).style.display = "block";
+            document.getElementById(x).style.display = "block";
+            document.getElementById("aux").value = x;
+
+    }
+    function novaEscolaridade(){
+        var display = document.getElementById("aux").style.display;
+            if(display == "none")
+                document.getElementById("aux").style.display = 'block';
+            else
+                document.getElementById("aux").style.display = 'none';
+    }
+    function mostrarCampos(){
+        document.getElementById('aux').addEventListener('change', function () {
+        var style = this.value == 'novaEscolaridade' ? 'block' : 'none';
+        // document.getElementById('hidden_div').style.display = style;
+    });
+    }
+    window.onload=function(){
+        document.getElementById('editarEsc').addEventListener('change', function () {
+
+            //Ensino Fundamental Completo
+            if(this.value === 'Ensino Fundamental Completo'){
+                //block
+                document.getElementById('anoDeConclusao').disabled = false;
+                //none
+                // document.getElementById('statusCampo').style.display = "none";
+                document.getElementById('instituicao').disabled = true;
+                document.getElementById('curso').disabled = true;
+
+
+            //Ensino Medio Incompleto
+            }else if(this.value === 'Ensino Médio Incompleto'){//emcInstituicao
+                //block
+                // document.getElementById('statusCampo').style.display = "block";
+                //none
+                document.getElementById('anoDeConclusao').disabled = true;
+                document.getElementById('instituicao').disabled = true;
+                document.getElementById('curso').disabled = true;
+
+
+
+            //Ensino Medio Completo
+            }else if(this.value === 'Ensino Médio Completo'){
+                //block
+                document.getElementById('anoDeConclusao').disabled = false;
+                //none
+                // document.getElementById('statusCampo').style.display = "none";
+                document.getElementById('instituicao').disabled = true;
+                document.getElementById('curso').disabled = true;
+
+
+            //Técnico/Pós-Médio Incompleto
+            }else if(this.value === 'Técnico/Pós-Médio Incompleto'){
+                //block
+                // document.getElementById('statusCampo').style.display = "block";
+                document.getElementById('instituicao').disabled = false;
+                document.getElementById('curso').disabled = false;
+                //none
+                document.getElementById('anoDeConclusao').disabled = true;
+
+            //Técnico/Pós-Médio Completo
+            }else if(this.value === 'Técnico/Pós-Médio Completo'){
+                //block
+                document.getElementById('anoDeConclusao').disabled = false;
+                document.getElementById('instituicao').disabled = false;
+                document.getElementById('curso').disabled = false;
+                //none
+                // document.getElementById('statusCampo').style.display = "none";
+
+
+            //Técnólogo Incompleto
+            }else if(this.value === 'Técnólogo Incompleto'){
+                //block
+                // document.getElementById('statusCampo').style.display = "block";
+                document.getElementById('instituicao').disabled = false;
+                document.getElementById('curso').disabled = false;
+                //none
+                document.getElementById('anoDeConclusao').disabled = true;
+
+            //Técnólogo Completo
+            }else if(this.value === 'Técnólogo Completo'){
+                //block
+                document.getElementById('anoDeConclusao').disabled = false;
+                document.getElementById('instituicao').disabled = false;
+                document.getElementById('curso').disabled = false;
+                //none
+                // document.getElementById('statusCampo').style.display = "none";
+
+
+            //Superior Incompleto
+            }else if(this.value === 'Superior Incompleto'){
+                //block
+                // document.getElementById('statusCampo').style.display = "block";
+                document.getElementById('instituicao').disabled = false;
+                document.getElementById('curso').disabled = false;
+                //none
+                document.getElementById('anoDeConclusao').disabled = true;
+
+            //Superior Completo
+            }else if(this.value === 'Superior Completo'){
+                //block
+                document.getElementById('anoDeConclusao').disabled = false;
+                document.getElementById('instituicao').disabled = false;
+                document.getElementById('curso').disabled = false;
+                //none
+                // document.getElementById('statusCampo').style.display = "none";
+            }else{
+            }
+        });
+    }
+    //Modal adicionar e Atualizar nova escolaridade
+    function adicionarAtualizarEscolaridade(type, idTemp, nivelEducacionalTemp, instituicaoTemp, cursoTemp, dataTemp){
+        // console.log(idTemp);
+        if(type === "adicionar"){
+            document.getElementById('idFlag').value=type;
+            document.getElementById('idEscolaridadeAdicionada').value='';
+            document.getElementById('instituicao').value='';
+            document.getElementById('curso').value='';
+            document.getElementById('curso').value=cursoTemp;
+            document.getElementById('curso').value='';
+        }else if(type === "atualizar"){
+            document.getElementById('idFlag').value=type;
+            document.getElementById('idEscolaridadeAdicionada').value=idTemp;
+            document.getElementById('instituicao').value=instituicaoTemp;
+            document.getElementById('curso').value=cursoTemp;
+            document.getElementById('anoDeConclusao').value=dataTemp;
+        }
+    }
+
+
 </script>
+
 @endsection

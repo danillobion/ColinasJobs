@@ -163,21 +163,25 @@ class CandidatoController extends Controller
     }
 
     public function adicionarEscolaridade(Request $request){
-       // dd(Auth::user()->candidato->user_id);
+        //  dd($request);
+    //    dd(Auth::user()->candidato->user_id);
         $this->validate($request,[
+            'nivel_educacional'     =>  'required|string|min:3|max:255',
             'instituicao'           =>  'string|min:3|max:255',
             'curso'                 =>  'string|min:3|max:255',
-            'data_inicio'           =>  'required|date',
-            'data_conclusao'        =>  'required|date',
+            // 'data_inicio'           =>  'required|date',
+            'anodeconclusao'        =>  'date',
         ]);
         Escolaridade::create([
-            'candidato_id'      => Auth::user()->candidato->id,
-            'instituicao'       => $request->instituicao,
-            'curso'             => $request->curso,
-            'data_inicio'       => $request->data_inicio,
-            'data_conclusao'    => $request->data_conclusao,
+            'candidato_id'          => Auth::user()->candidato->id,
+            'status'                => $request->status,
+            'nivel_educacional'     => $request->nivel_de_formacao,
+            'instituicao'           => $request->instituicao,
+            'curso'                 => $request->curso,
+            'data_inicio'           => $request->data_inicio,
+            'anodeconclusao'        => $request->data_conclusao,
         ]);
-        return redirect()->route('abrir_painel_curriculum');
+        return redirect()->route('editarEscolaridade');
     }
 
     public function adicionarExperiencias(Request $request){
@@ -228,6 +232,15 @@ class CandidatoController extends Controller
         return redirect()->route('home');
     }
 
+    public function removerInteresseNaVagaViewLista(Request $request){
+        $this->validate($request,[
+            'vaga_id'                    =>  'required',
+            'empresa_id'                 =>  'required',
+        ]);
+        $resultado = Match::where('candidato_id',Auth::user()->candidato->id)->where('vaga_id',$request->vaga_id)->delete();
+        return redirect()->route('listarMeuInteresse');
+    }
+
     //editar
     public function editarMiniCurriculo(){
         $resultado = DB::table('candidatos')
@@ -247,10 +260,11 @@ class CandidatoController extends Controller
     }
 
     public function editarEscolaridade(){
-        $resultado = DB::table('escolaridades')
-        ->select('escolaridades.instituicao','escolaridades.curso','escolaridades.data_inicio','escolaridades.data_conclusao')
-        ->where('escolaridades.candidato_id','ilike',Auth::user()->candidato->id)
-        ->get();
+        // $resultado = DB::table('escolaridades')
+        // ->select('escolaridades.instituicao','escolaridades.curso','escolaridades.data_inicio','escolaridades.data_conclusao')
+        // ->where('escolaridades.candidato_id','ilike',Auth::user()->candidato->id)
+        // ->get();
+        $resultado = Escolaridade::where('candidato_id',Auth::user()->candidato->id)->get();
         //dd(empty($resultado));
         return view('escolaridade_candidato', ['escolaridades'=>$resultado]);
     }
@@ -324,24 +338,61 @@ class CandidatoController extends Controller
         return redirect()->route('abrir_painel_curriculum');
 
     }
+    /*
+    * FUNCAO: e utilizada pelo modal para editar e adicionar escolaridade
+    * VIEW: escolaridade_candidato
+    */
+    public function adicionarEAtualizarEscolaridade(Request $request){
+        // dd($request);
+        //valido os campos antes de entrar no comando de decisao
+        $this->validate($request,[
+            'nivel_educacional'     =>  'string|max:255',
+            'instituicao'           =>  'string|max:255',
+            'curso'                 =>  'string|max:255',
+            'data_conclusao'        =>  'date',
+        ]);
+
+        if($request->flagTemp == "adicionar"){
+            $this->adicionarEscolaridade($request);
+        }else{
+            // dd($request);
+            $this->atualizarEscolaridade($request);
+        }
+        return redirect()->route('editarEscolaridade');
+    }
 
     public function atualizarEscolaridade(Request $request){
-        //dd($request);
+        $resultado = DB::table('escolaridades')
+        ->where('escolaridades.candidato_id','ilike',Auth::user()->candidato->id)
+        ->where('escolaridades.id','ilike',$request->escolaridade_id)
+        ->update([
+            'nivel_de_formacao' => $request->nivel_educacional,
+            'instituicao'       => $request->instituicao,
+            'curso'             => $request->curso,
+            'data_conclusao'    => $request->anodeconclusao,
+        ]);
+        return redirect()->route('editarEscolaridade');
+
+    }
+    /*
+    * FUNCAO: remover escolaridade
+    * VIEW: escolaridade_candidato
+    */
+    public function deletarEscolaridade(Request $request){
+        // dd($request);
         $this->validate($request,[
-            'instituicao'           =>  'string|min:3|max:255',
-            'curso'                 =>  'string|min:3|max:255',
-            'data_inicio'           =>  'required|date',
-            'data_conclusao'        =>  'required|date',
+            'nivel_educacional'     =>  'string|max:255',
+            'instituicao'           =>  'string|max:255',
+            'curso'                 =>  'string|max:255',
+            'data_inicio'           =>  'date',
+            'data_conclusao'        =>  'date',
         ]);
         $resultado = DB::table('escolaridades')
         ->where('escolaridades.candidato_id','ilike',Auth::user()->candidato->id)
-        ->update([
-            'instituicao'       => $request->instituicao,
-            'curso'             => $request->curso,
-            'data_inicio'       => $request->data_inicio,
-            'data_conclusao'    => $request->data_conclusao,
-        ]);
-        return redirect()->route('abrir_painel_curriculum');
+        ->where('escolaridades.id','ilike',$request->escolaridade_id)
+        ->delete();
+
+        return redirect()->route('editarEscolaridade');
     }
 
     public function atualizarExperiencia(Request $request){
@@ -379,6 +430,11 @@ class CandidatoController extends Controller
     public function buscarCandidato(Request $request){
         $candidatos = Candidato::where('nome_completo', 'like', '%' . strtolower($request->busca) . '%')-> paginate(10);
         return view('principal_empresa', ['candidatos' => $candidatos]);
+    }
+
+    public function listarMeuInteresse(){
+        $resultado = Match::where('candidato_id',Auth::user()->candidato->id)->get();
+        return view('lista_de_vagas_interessadas_candidato', ['match' => $resultado]);
     }
 
     public function buscarNaoLogado(Request $request){

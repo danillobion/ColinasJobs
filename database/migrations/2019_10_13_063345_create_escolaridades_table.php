@@ -16,8 +16,10 @@ class CreateEscolaridadesTable extends Migration
         Schema::create('escolaridades', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('candidato_id')->nullable();
+            $table->string('nivel_de_formacao')->nullable();
             $table->string('instituicao')->nullable();
             $table->string('curso')->nullable();
+            $table->string('status')->nullable();
             $table->date('data_inicio')->nullable();
             $table->date('data_conclusao')->nullable();
             $table->timestamps();
