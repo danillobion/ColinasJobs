@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 
 <style>
@@ -10,8 +9,11 @@
         <div class="col-sm-3">
 
             <div class="card" style="width:100%;">
-                <div class="card-header">Minhas Oportunidades Cadastradas</div>
-                <div class="card-body" >
+                    <div class="card-header">Minhas Oportunidades Cadastradas</div>
+                    <div class="card-body" >
+                        {{-- <div>
+                            @include('mensagens.mensagem')
+                        </div> --}}
                     @if (session('status'))
                     <div class="alert alert-success" role="alert">
                         {{ session('status') }}
@@ -51,12 +53,12 @@
                     <input id="div_A" type="hidden" value="1">
                 </div>
             </div>
+
         </div>
         <div class="col-sm-6">
             <div class="card" style="height:100%">
                 <div class="card-header">Detalhes</div>
                 {{-- Detalhes da vaga --}}
-
                         <?php $idTemp =0; ?>
                         @if(!is_null($empresas))
                             @foreach($empresas as $id)
@@ -111,153 +113,9 @@
                                 @endfor
                             @endforeach
                         @endif
-
-                {{-- Curriculo --}}
-                <div class="card-body" >
-                    <?php $idTemp=0; ?>
-                    @if(!is_null($empresas))
-                        @foreach ($empresas as $item)
-                            @for($i = 0; $i < sizeof($item->vaga); $i++)
-                                @for($j = 0; $j < sizeof($item->vaga[$i]->match); $j++)
-                                    <?php $idTemp++; ?>
-                                    <div style="display: none" id="curriculo{{$idTemp}}">
-                                        <a style="font-size:25px;">{{$item->vaga[$i]->match[$j]->candidato->nome_completo}}</a> <br>
-                                        <a> {{'cidade'}}{{"/"}}{{'uf'}}</a> <br>
-                                        <hr style="margin-top:2px;">
-                                        <div class="btn-group">
-                                            <p>Data de Nascimento:  </p>
-                                            <a style="margin-left:5px;"> {{$item->vaga[$i]->match[$j]->candidato->data_de_nascimento}}</a>
-                                        </div><br>
-                                        <div class="btn-group" style="margin-top:-19px;">
-                                            <p>Email:  </p>
-                                            <a style="margin-left:5px;"> {{$item->vaga[$i]->match[$j]->candidato->email}}</a>
-                                        </div><br>
-                                        <div class="btn-group" style="margin-top:-19px;">
-                                        <div>
-                                            <p >Telefone: {{$item->vaga[$i]->match[$j]->candidato->telefone}}</p>
-                                        </div>
-                                        <div>
-                                            <p style="margin-left:10px;">Celular: {{$item->vaga[$i]->match[$j]->candidato->celular}}</p>
-                                        </div>
-                                        </div><br>
-                                        <div  style="margin-top:-19px;">
-                                            <a> {{"Deficiência: "}}{{$item->vaga[$i]->match[$j]->candidato->tipo_de_deficiencia}}</a> <br>
-                                        </div>
-                                        <hr style="margin-top:2px;">
-                                            <div>
-                                                @foreach ($item->vaga[$i]->match[$j]->candidato->escolaridade as $itemEscolaridade)
-                                                    <p style="margin-top:-10px; font-size:19px;">Escolaridade</p>
-                                                    <div style="margin-top:-10px;">
-                                                        <a> {{"Instituição: "}}{{$itemEscolaridade->instituicao}}</a> <br>
-                                                        <a> {{"Curso: "}}{{$itemEscolaridade->curso}}</a> <br>
-                                                        <div>
-                                                            <a> {{"Data Entrada: "}}</a>{{$itemEscolaridade->data_inicio}}</a>
-                                                            <a style="margin-left:10px;"> {{"Data Saída: "}}</a> {{$itemEscolaridade->data_conclusao}}</a>
-                                                        </div>
-                                                    </div><br>
-                                                    <hr style="margin-top:2px;">
-                                                @endforeach
-                                            </div>
-                                            <div>
-                                                @foreach ($item->vaga[$i]->match[$j]->candidato->experiencia as $itemExperiencia)
-                                                    <p style="margin-top:-10px; font-size:19px;">Experiência</p>
-                                                    <div style="margin-top:-10px;">
-                                                        <a> {{"Empresa: "}}{{$itemExperiencia->nome_empresa}}</a> <br>
-                                                        <a> {{"Atribuição: "}}{{$itemExperiencia->atribuicao}}</a> <br>
-                                                        @foreach ($itemExperiencia->cargo as $itemCargo)
-                                                            <a> {{"Cargo: "}}{{$itemCargo->nome_cargo}}</a> <br>
-                                                        @endforeach
-                                                        <div>
-                                                            <a> {{"Data Saída: "}}</a>{{$itemExperiencia->data_fim}}</a>
-                                                        </div>
-                                                    </div><br>
-                                                @endforeach
-                                            </div>
-                                        <hr/>
-                                        <div>
-                                            @if($item->vaga[$i]->match[$j]->match === NULL )
-                                                <div class="btn-group">
-                                                    <div>
-                                                        <form action="{{route('interesseNoCandidato')}}" method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
-                                                            <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
-                                                            <input type="hidden" name="match" value="TRUE">
-                                                            <button type="submit" style="background-color:blue;  border: none;
-                                                            border-radius: 8px;
-                                                            color: white;
-                                                            padding: 4px 11px;
-                                                            text-align: center;
-                                                            text-decoration: none;
-                                                            display: inline-block;
-                                                            font-size: 13px;
-                                                            margin: 4px 2px;
-                                                            cursor: pointer;">Tenho Interesse</button>
-                                                        </form>
-                                                    </div>
-                                                    <div class="margin-left:50px;">
-                                                        <form action="{{route('interesseNoCandidato')}}" method="POST">
-                                                            @csrf
-                                                            <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
-                                                            <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
-                                                            <input type="hidden" name="match" value="FALSE">
-                                                            <button type="submit" style="background-color:red;  border: none;
-                                                            border-radius: 8px;
-                                                            color: white;
-                                                            padding: 4px 11px;
-                                                            text-align: center;
-                                                            text-decoration: none;
-                                                            display: inline-block;
-                                                            font-size: 13px;
-                                                            margin: 4px 2px;
-                                                            cursor: pointer;">Não Tenho Interesse</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            @elseif($item->vaga[$i]->match[$j]->match === FALSE)
-                                                <form action="{{route('interesseNoCandidato')}}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
-                                                    <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
-                                                    <input type="hidden" name="match" value="TRUE">
-                                                    <button type="submit" style="background-color:blue;  border: none;
-                                                    border-radius: 8px;
-                                                    color: white;
-                                                    padding: 4px 11px;
-                                                    text-align: center;
-                                                    text-decoration: none;
-                                                    display: inline-block;
-                                                    font-size: 13px;
-                                                    margin: 4px 2px;
-                                                    cursor: pointer;">Tenho Interesse</button>
-                                                </form>
-                                            @else
-                                                <form action="{{route('interesseNoCandidato')}}" method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
-                                                    <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
-                                                    <input type="hidden" name="match" value="FALSE">
-                                                    <button type="submit" style="background-color:red;  border: none;
-                                                    border-radius: 8px;
-                                                    color: white;
-                                                    padding: 4px 11px;
-                                                    text-align: center;
-                                                    text-decoration: none;
-                                                    display: inline-block;
-                                                    font-size: 13px;
-                                                    margin: 4px 2px;
-                                                    cursor: pointer;">Não Tenho Interesse</button>
-                                                </form>
-                                            @endif
-                                        </div>
-                                    </div>
-                                @endfor
-                            @endfor
-                        @endforeach
-                    @endif
-                </div>
             </div>
         </div>
+
         <div class="col-sm-3">
             <div class="card" style="height:100%">
                 <div class="card-header">Candidatos Interessados</div>
@@ -276,7 +134,7 @@
                                 <ul style="height: 5rem;margin-top:1%; ">
                                 <div style="margin-left:-40px;">
                                         <?php $idTemp++; ?>
-                                        <button id="buttonMeusCandidatos{{$idTemp}}" onclick="mostrarCurriculo({{$idTemp}})" class="button buttonCampo1" style="">
+                                        <button id="buttonMeusCandidatos{{$idTemp}}" onclick="mostrarCurriculo({{$idTemp}})" class="button buttonCampo1" style="" data-toggle="modal" data-target="#modalExemplo">
                                             <div style="margin-left:-5px; margin-bottom:30%; width:75%; height:5%; text-align: left;">
                                                 <p style="margin-bottom: -5px;">{{$item->vaga[$i]->match[$j]->candidato->nome_completo}}</p>
                                                 <p style="margin-bottom: -5px;">{{$item->vaga[$i]->match[$j]->candidato->funcao}}</p>
@@ -298,6 +156,217 @@
         </div>
     </div>
 </div>
+{{-- MODAL --}}
+<div class="modal fade" id="modalExemplo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Canidato Interessado</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{-- Curriculo --}}
+
+                        <?php $idTemp=0; ?>
+                        @if(!is_null($empresas))
+                            @foreach ($empresas as $item)
+                                @for($i = 0; $i < sizeof($item->vaga); $i++)
+                                    @for($j = 0; $j < sizeof($item->vaga[$i]->match); $j++)
+                                        <?php
+                                            $idTemp++;
+                                            $nomeCompletoTemp = $item->vaga[$i]->match[$j]->candidato->nome_completo;
+                                        ?>
+                                        <div style="display: none" id="curriculo{{$idTemp}}">
+                                            <a style="font-size:25px;">{{$item->vaga[$i]->match[$j]->candidato->nome_completo}}</a> <br>
+                                            <a> {{'cidade'}}{{"/"}}{{'uf'}}</a> <br>
+                                            <hr style="margin-top:2px;">
+                                            <div class="btn-group">
+                                                <p>Data de Nascimento:  </p>
+                                                <a style="margin-left:5px;"> {{$item->vaga[$i]->match[$j]->candidato->data_de_nascimento}}</a>
+                                            </div><br>
+                                            <div class="btn-group" style="margin-top:-19px;">
+                                                <p>Email:  </p>
+                                                <a style="margin-left:5px;"> {{$item->vaga[$i]->match[$j]->candidato->email}}</a>
+                                            </div><br>
+                                            <div class="btn-group" style="margin-top:-19px;">
+                                            <div>
+                                                <p >Telefone: {{$item->vaga[$i]->match[$j]->candidato->telefone}}</p>
+                                            </div>
+                                            <div>
+                                                <p style="margin-left:10px;">Celular: {{$item->vaga[$i]->match[$j]->candidato->celular}}</p>
+                                            </div>
+                                            </div><br>
+                                            <div  style="margin-top:-19px;">
+                                                <a> {{"Deficiência: "}}{{$item->vaga[$i]->match[$j]->candidato->tipo_de_deficiencia}}</a> <br>
+                                            </div>
+                                                <div>
+                                                    <p style="margin-top:10px; margin-bottom:-4px; font-size:19px;">Escolaridade</p>
+                                                        <table class="table table-sm table-hover " style="font-size:12px;">
+                                                            <thead>
+                                                              <tr>
+                                                                <th scope="col">Nível de Formação</th>
+                                                                <th scope="col">Instituição</th>
+                                                                <th scope="col">Curso</th>
+                                                                <th scope="col">Status</th>
+                                                                <th scope="col">Ano de Conclusão</th>
+                                                              </tr>
+                                                            </thead>
+                                                            @foreach ($item->vaga[$i]->match[$j]->candidato->escolaridade as $itemEscolaridade)
+                                                                <tbody>
+                                                                    <tr>
+                                                                    <td>{{$itemEscolaridade->nivel_de_formacao}}</td>
+                                                                    <td>{{$itemEscolaridade->instituicao}}</td>
+                                                                    <td>{{$itemEscolaridade->curso}}</td>
+                                                                    <td>{{$itemEscolaridade->status}}</td>
+                                                                    <?php
+                                                                        $dataTemp = $itemEscolaridade->data_conclusao;
+                                                                        $dataSplit = explode("-", $dataTemp);
+                                                                    ?>
+                                                                    <td>{{$dataSplit[0]}}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            @endforeach
+                                                        </table>
+
+                                                </div>
+                                                <div>
+                                                        <p style="margin-top:10px; margin-bottom:-4px; font-size:19px;">Experiencia</p>
+                                                        <table class="table table-sm table-hover" style="font-size:12px;">
+                                                                <thead>
+                                                                  <tr>
+                                                                    <th scope="col">Empresa</th>
+                                                                    <th scope="col">Atribuição</th>
+                                                                    <th scope="col">Cargo</th>
+                                                                    <th scope="col">Saída</th>
+                                                                  </tr>
+                                                                </thead>
+                                                    @foreach ($item->vaga[$i]->match[$j]->candidato->experiencia as $itemExperiencia)
+                                                        <tbody>
+                                                                <tr>
+                                                                <td>{{$itemExperiencia->nome_empresa}}</td>
+                                                                <td>{{$itemExperiencia->atribuicao}}</td>
+                                                                @foreach ($itemExperiencia->cargo as $itemCargo)
+                                                                    <td>{{$itemCargo->nome_cargo}}</td>
+                                                                @endforeach
+                                                                <?php
+                                                                    $dataSaida = $itemExperiencia->data_fim;
+                                                                    $dataSaidaSplit =  explode("-", $dataSaida);
+                                                                ?>
+                                                                <td>{{$dataSaidaSplit[0]}}</td>
+
+                                                                </tr>
+                                                            </tbody>
+                                                    @endforeach
+                                                </table>
+                                                <hr>
+                                                </div>
+                                            <div>
+                                                @if($item->vaga[$i]->match[$j]->match === NULL )
+                                                    <div >
+                                                        <div style="float: left;">
+                                                            {{-- <form action="{{route('interesseNoCandidato')}}" method="POST"> --}}
+                                                                @csrf
+                                                                <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
+                                                                <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
+                                                                <input type="hidden" name="match" value="TRUE">
+                                                                <button type="submit" class="btn btn-primary" id="tenhoInteresse" onclick="mostrarBotoes('opcoes')">Tenho Interesse</button>
+                                                            {{-- </form> --}}
+                                                        </div>
+                                                        <div style="float: right;">
+                                                            <form action="{{route('interesseNoCandidato')}}" method="POST">
+                                                                @csrf
+                                                                <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
+                                                                <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
+                                                                <input type="hidden" name="match" value="FALSE">
+                                                                <button type="submit" class="btn btn-danger">Não Tenho Interesse</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                @elseif($item->vaga[$i]->match[$j]->match === FALSE)
+                                                    <form action="{{route('interesseNoCandidato')}}" method="POST">
+
+                                                    <?php
+                                                        $opcoes ='opcoes';
+                                                        $id = $item->vaga[$i]->match[$j]->candidato_id;
+                                                        $opcoes = $opcoes . $id;
+
+                                                        $tenhoInt = 'tenhoInt';
+                                                        $tenhoInt = $tenhoInt . $id;
+
+                                                        $botaoSim = 'botaoSim';
+                                                        $botaoSim = $botaoSim . $id;
+
+                                                        $idcampo = 'idcampo';
+                                                        $idcampo = $idcampo . $id;
+                                                    ?>
+
+                                                    <div id="botaoTenhoInteresse" style="display:block;">
+                                                    {{-- <form action="{{route('interesseNoCandidato')}}" method="POST"> --}}
+                                                        @csrf
+                                                        <input type="hidden" name="nome" value="{{$item->vaga[$i]->match[$j]->candidato->nome_completo}}">
+                                                        <input type="hidden" name="vaga" value="{{$item->vaga[$i]->nome_vaga}}">
+                                                        <input type="hidden" name="empresa" value="{{$item->nome_empresa}}">
+                                                        <input type="hidden" name="emailCandidato"  value="{{$item->vaga[$i]->match[$j]->candidato->user->email}}">
+
+                                                        <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
+                                                        <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
+                                                        <input type="hidden" name="match" value="TRUE">
+                                                        <button type="button" class="btn btn-primary" id="{{$tenhoInt}}" onclick="mostrarBotoes('{{$opcoes}}', '{{$tenhoInt}}', '','')">Tenho Interesse</button>
+                                                    {{-- </form> --}}
+                                                    </div>
+
+                                                    {{-- campo com opções SIM/NAO--}}
+                                                    <div id="{{$opcoes}}" style="display:none;" class="form-group campoOpcoes">
+                                                        <label>Você deseja enviar uma mensagem personalizada?</label><br>
+                                                        <button type="button" class="btn btn-success" id="{{$idcampo}}" onclick="mostrarBotoes('{{$opcoes}}', '{{$tenhoInt}}','{{$botaoSim}}', 'sim')">Sim</button>
+                                                        <button type="submit" class="btn btn-danger" id="{{$idcampo}}" onclick="mostrarBotoes('{{$opcoes}}', '{{$tenhoInt}}','{{$botaoSim}}', 'nao')">Não</button>
+                                                    </div>
+
+                                                    {{-- campo text --}}
+                                                    <div id="{{$botaoSim}}" style="display:none;" class="form-group campoOpcoes">
+                                                        <label>Enviar e-mail</label><br>
+                                                        <div class="btg-group">
+                                                            Para:<br>
+                                                            <input value="{{$item->vaga[$i]->match[$j]->candidato->nome_completo}}" style="width:100%" disabled>
+                                                        </div>
+                                                        <div class="btg-group">
+                                                            Mensagem:<br><textarea id="campoText" style="width:100%" name="campoMensagem" placeholder="Mensagem padrão: Parabéns Fulano, a empresa X ficou interessada no seu currículo!!"></textarea>
+                                                            <br><button type="submit" class="btn btn-success">Enviar</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="mostrarBotoes('{{$opcoes}}', '{{$tenhoInt}}','{{$botaoSim}}','fechar')">Fechar</button>
+                                                    </div>
+                                                </form>
+                                                @else
+                                                    <form action="{{route('interesseNoCandidato')}}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="candidato_id" value="{{$item->vaga[$i]->match[$j]->candidato_id}}">
+                                                        <input type="hidden" name="vaga_id" value="{{$item->vaga[$i]->match[$j]->vaga_id}}">
+                                                        <input type="hidden" name="match" value="FALSE">
+                                                        <button type="submit" class="btn btn-danger">Não Tenho Interesse</button>
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                                        </div>
+
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @endfor
+                                    @endfor
+                            @endforeach
+                        @endif
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- X MODAL X --}}
 <input id="ultimaVaga" type="hidden" value="">
 <input id="ultimoCurriculo" type="hidden" value="">
 <input id="ultimoIdVaga" type="hidden" value="">
@@ -327,6 +396,7 @@
             document.getElementById(str3.concat(ultimoCurriculo.value)).style.display = "none";
         }
 
+        //altera a lista de candidatos de acordo com a vaga selecionada
         if(ultimoIdVaga.value != ""){
             document.getElementById(str4.concat(ultimoIdVaga.value)).style.display = "none";
         }
@@ -343,23 +413,52 @@
     }
 
     function mostrarCurriculo(x){
-
         document.getElementById(str5.concat(x)).className = "button buttonCampo1 enabled-jobs";
-
         if(ultimaVaga.value != ""){
-            document.getElementById(str2.concat(ultimaVaga.value)).style.display = "none";
+            // document.getElementById(str2.concat(ultimaVaga.value)).style.display = "none";
         }
         document.getElementById(str3.concat(x)).style.display = "block";
         if(ultimoCurriculo.value != ""){
             document.getElementById(str3.concat(ultimoCurriculo.value)).style.display = "none";
+            document.getElementById(str3.concat(x)).style.display = "block";
         }
         if(ultimoCurriculo.value != ""){
             document.getElementById(str5.concat(ultimoCurriculo.value)).className = "button buttonCampo1";
         }
         ultimoCurriculo.value = x;
+    }
 
+    /*
+    *   FUNCAO: Mostrar botoes com as opções de SIM/NAO para enviar uma mensagem personalizada.
+    *
+    */
+    function mostrarBotoes(comando, botaoTI, botaoSim, tipo){
+
+        // console.log(document.getElementById('modalExemplo').style.display);
+
+        if(tipo == 'sim'){
+            // console.log('sim!');
+            document.getElementById(botaoSim).style.display = 'block';
+            document.getElementById(comando).style.display = 'none';
+
+        }else if(tipo == 'nao'){
+            // console.log(tipo);
+            document.getElementById(botaoTI).style.display = 'block';
+            document.getElementById(comando).style.display = 'none';
+            document.getElementById(botaoSim).style.display = 'none';
+
+        }else if(tipo == 'fechar'){
+            console.log(tipo);
+            document.getElementById(botaoTI).style.display = 'block';
+            document.getElementById(botaoSim).style.display = 'none';
+            document.getElementById(comando).style.display = 'none';
+        }else{
+            document.getElementById(botaoTI).style.display = 'none';
+            document.getElementById(comando).style.display = 'block';
+        }
 
     }
+
 </script>
 
 @endsection

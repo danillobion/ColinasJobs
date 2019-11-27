@@ -110,4 +110,7 @@ Route::group(['middleware' => 'verifica_email'], function(){
         Route::post('/interessenocandidato', 'EmpresaController@interesseNoCandidato')->name('interesseNoCandidato');
 
         Route::get('/principalempresa', 'EmpresaController@principalEmpresa')->name('principal_empresa');
+
+        Route::post('/enviar/mail', 'EmailController@enviarEmail')->name('enviar_email');
+
 });
