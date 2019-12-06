@@ -105,6 +105,12 @@ Route::group(['middleware' => 'verifica_email'], function(){
 
         Route::post('/adicionarVaga', 'EmpresaController@adicionarVaga')->name('adicionarVaga');
 
+        Route::get('/editar/vaga', 'EmpresaController@editarVaga')->name('editarVaga');
+
+        Route::post('/atualizar/vaga', 'EmpresaController@atualizarVaga')->name('atualizarVaga');
+
+        Route::get('/deletar/vaga', 'EmpresaController@deletarVaga')->name('deletarVaga');
+
         Route::get('/resultadoCandidato', 'CandidatoController@buscarCandidato') ->name('buscarCandidato');
 
         Route::post('/interessenocandidato', 'EmpresaController@interesseNoCandidato')->name('interesseNoCandidato');

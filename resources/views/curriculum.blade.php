@@ -104,7 +104,7 @@
                                                             Sim <input type="radio" onclick="javascript:yesnoCheck('');" name="tipo_de_deficiencia" id="yesCheck" > Não <input type="radio" onclick="javascript:yesnoCheck('Nenhuma');" name="tipo_de_deficiencia" id="noCheck" checked >
                                                         @else
                                                             @foreach ($candidatos as $item)
-                                                                {{-- se retornar o nome "nenhuma" --}}
+                                                                {{-- retornar o nome "nenhuma" --}}
                                                                 @if(strpos($item->tipo_de_deficiencia,'Nenhuma')!==false)
                                                                     Sim <input type="radio" onclick="javascript:yesnoCheck('');" name="tipo_de_deficiencia" id="yesCheck" > Não <input type="radio" onclick="javascript:yesnoCheck('Nenhuma');" name="tipo_de_deficiencia" id="noCheck" checked>
                                                                 {{-- se for um nome diferente de "nenhuma" --}}
@@ -151,23 +151,6 @@
                                 </div><br>
                                 <div style="float:right;">
                                 </div>
-                                    {{-- <div>
-                                        <label for="entradaFuncao">Função<a style="color:red"> *</a></label>
-                                        <input id="selecaoFuncao" type="text" name="funcao" class="@error('funcao') is-invalid @enderror form-control" style="width:300px;" id="entradaFuncao" value="{{ old('funcao') }}" placeholder="Digite aqui a sua função">
-                                        <small id="entradaFuncao" class="form-text text-muted">ex.: Pintor, Manobrista</small>
-                                        @error('funcao')
-                                            <div >
-                                                <a style="color:red;">{{ $message }}</a>
-                                            </div>
-                                        @enderror
-                                        <input type="button" name="botao" value="Adicionar" onclick='teste(selecaoFuncao)'>
-                                        <p style="font-family: 'Courgette', cursive; font-size:19px; color:#f69552; margin-top:20px; width:280px;">O campo função vai servir de elo de ligação entre você e as oportunidades.</p>
-                                    </div>
-                                </div>
-                                <div style="float:left;">
-                                    <textarea type='text' id='tags' name='funcao' rows="10" cols="29" style="margin-top:9px; resize: none;"></textarea>
-
-                                </div> --}}
                                 <div class="btn-group">
                                     <div>
                                         <label for="entradaCelular">Celular<a style="color:red"> *</a></label>

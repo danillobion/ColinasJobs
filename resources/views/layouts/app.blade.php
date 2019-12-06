@@ -87,7 +87,6 @@
                                     @elseif(!is_null( Auth::user()->empresa))
                                         <a class="dropdown-item" href="{{ route('vaga') }}">
                                             <div class="btn-group">
-                                                <div style="padding-left: 2%"><img src="icon/curriculum.png" alt="curriculum" width="17px" height="20px"></div>
                                                 <div style="margin-left:6px; margin-top:3px;">{{ __('Criar Vaga') }}</div>
                                             </div>
                                         </a>

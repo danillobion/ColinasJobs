@@ -60,6 +60,7 @@ class UsersSeeder extends Seeder
         for($i=1;$i<=25;$i++){
             Endereco::create([
                 'empresa_id'            =>  $i,
+                // 'vaga_id'               =>  ,
                 'uf'                    =>  "PE",
                 'cidade'                =>  "Recife",
                 'bairro'                =>  "Boa Viagem",

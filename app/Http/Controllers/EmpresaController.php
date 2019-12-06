@@ -39,9 +39,94 @@ class EmpresaController extends Controller
       ]);
     return redirect()->route('home');
   }
+
+  /*
+  * FUNCAO: Empresa deseja atualizar uma vaga
+  * TIPO: POST
+  * VIEW: principal_empresa
+  */
   public function adicionarVaga(Request $request){
-      //dd($request);
-      $validatedData = $request->validate([
+    //   dd($request);
+    // dd(Auth::user()->endereco->id);
+    $validatedData = $request->validate([
+    'nome_vaga'             =>  'required|string|max:255',
+    'atribuicoes'           =>  'required|string|max:255',
+    'experiencia'           =>  'required|string|max:255',
+    'descricao'             =>  'required|string|max:255',
+    'quantidade'            =>  'numeric',
+    'salario'               =>  'numeric',
+    'tipo_de_remuneracao'   =>  'required|string|max:255',
+
+    'uf'                    =>  'required',
+    'cidade'                =>  'required',
+    'bairro'                =>  'required',
+    'rua'                   =>  'required',
+    'numero'                =>  'required',
+    ]);
+    $idVaga = Vaga::create([
+        'empresa_id'            => Auth::user()->empresa->id,
+        'data_publicacao'       => date("d-m-Y"),
+        'nome_vaga'             => $request->nome_vaga,
+        'atribuicoes'           => $request->atribuicoes,
+        'experiencia'           => $request->experiencia,
+        'descricao'             => $request->descricao,
+        'quantidade'            => $request->quantidade,
+        'salario'               => $request->salario,
+        'vaga_para_pcd'         => $request->vaga_para_pcd,
+        'tipo_de_vaga'          => $request->tipo_de_vaga,
+        'tipo_de_remuneracao'   => $request->tipo_de_remuneracao,
+    ]);
+
+    $resultado = Endereco::create([
+        'empresa_id'        => Auth::user()->empresa->id,
+        'vaga_id'           => $idVaga->id,
+        'uf'                => $request->uf,
+        'cidade'            => $request->cidade,
+        'bairro'            => $request->bairro,
+        'rua'               => $request->rua,
+        'numero'            => $request->numero,
+        'complemento'       => $request->complemento,
+    ]);
+    // dd($idVaga, $resultado);
+
+
+    return redirect()->route('home');
+  }
+
+  /*
+  * FUNCAO: Empresa deseja editar uma vaga
+  * TIPO: GET
+  * VIEW: principal_empresa
+  */
+  public function editarVaga(Request $request){
+    $resultado = Vaga::where('empresa_id',$request->idEmpresa)->where('id',$request->idVaga)->first();
+    // dd($resultado);
+
+    return view('cadastrar_vaga', ['vaga' => $resultado]);
+
+  }
+
+  /*
+  * FUNCAO: Empresa deseja remover uma vaga
+  * TIPO: GET
+  * VIEW: principal_empresa
+  */
+  public function deletarVaga(Request $request){
+    //remover endereco
+    Endereco::where('empresa_id',Auth::user()->empresa->id)->where('vaga_id',$request->idVaga)->delete();
+    //remover vaga
+    Vaga::where('empresa_id',Auth::user()->empresa->id)->where('id',$request->idVaga)->delete();
+
+    return redirect()->route('home');
+  }
+
+  /*
+  * FUNCAO: Empresa deseja atualizar uma vaga
+  * TIPO: POST
+  * VIEW: principal_empresa
+  */
+  public function atualizarVaga(Request $request){
+    $validatedData = $request->validate([
         'nome_vaga'             =>  'required|string|max:255',
         'atribuicoes'           =>  'required|string|max:255',
         'experiencia'           =>  'required|string|max:255',
@@ -56,30 +141,31 @@ class EmpresaController extends Controller
         'rua'                   =>  'required',
         'numero'                =>  'required',
       ]);
-      Vaga::create([
-        'empresa_id' => Auth::user()->empresa->id,
-        'data_publicacao' => date("d-m-Y"),
-        'nome_vaga' => $request->nome_vaga,
-        'atribuicoes' => $request->atribuicoes,
-        'experiencia' => $request->experiencia,
-        'descricao' => $request->descricao,
-        'quantidade' => $request->quantidade,
-        'salario' => $request->salario,
-        'vaga_para_pcd' => $request->vaga_para_pcd,
-        'tipo_de_vaga' => $request->tipo_de_vaga,
-        'tipo_de_remuneracao' => $request->tipo_de_remuneracao,
+    //   dd(Auth::user()->empresa->id);
+    Vaga::where('empresa_id',Auth::user()->empresa->id)->where('id',$request->idVaga)
+    ->update([
+        'data_publicacao'       => date("d-m-Y"),
+        'nome_vaga'             => $request->nome_vaga,
+        'atribuicoes'           => $request->atribuicoes,
+        'experiencia'           => $request->experiencia,
+        'descricao'             => $request->descricao,
+        'quantidade'            => $request->quantidade,
+        'salario'               => $request->salario,
+        'vaga_para_pcd'         => $request->vaga_para_pcd,
+        'tipo_de_vaga'          => $request->tipo_de_vaga,
+        'tipo_de_remuneracao'   => $request->tipo_de_remuneracao,
     ]);
-    Endereco::create([
-        'empresa_id' => Auth::user()->empresa->id,
-        'uf' => $request->uf,
-        'cidade' => $request->cidade,
-        'bairro' => $request->bairro,
-        'rua' => $request->rua,
-        'numero' => $request->numero,
-        'complemento'=>$request->complemento,
+    Endereco::where('empresa_id',Auth::user()->empresa->id)->where('vaga_id',$request->idVaga)
+    ->update([
+        'uf'                    => $request->uf,
+        'vaga_id'               => $request->idVaga,
+        'cidade'                => $request->cidade,
+        'bairro'                => $request->bairro,
+        'rua'                   => $request->rua,
+        'numero'                => $request->numero,
+        'complemento'           =>$request->complemento,
     ]);
-
-    return redirect()->route('home');
+    return redirect()->route('home')->with('sucesso', 'A vaga '. $request->nome_vaga .' foi atualizada com sucesso.');
   }
 
   /*
@@ -88,8 +174,8 @@ class EmpresaController extends Controller
   * VIEW: principal_empresa
   */
   public function interesseNoCandidato(Request $request){
-    // dd($request->match);
-
+    // dd($request);
+    // return view('emails.mensagem_email');
     $this->validate($request,[
         'candidato_id'             =>  'required',
         'vaga_id'                  =>  'required',
@@ -100,12 +186,13 @@ class EmpresaController extends Controller
     ->where('vaga_id','like',$request->vaga_id)
     ->update(['empresa_id'=> Auth::user()->empresa->id, 'match'=>$request->match]);
 
-        if($request->match=='TRUE'){
-            EmailController::enviarEmail($request);
-        }
+        // if($request->match=='TRUE'){
+        //     EmailController::enviarEmail($request);
+        // }
 
-    return redirect()->back()->with('sucesso', 'E-mail enviado com sucesso!');
+    return redirect()->back(); //->with('sucesso', 'E-mail enviado com sucesso!');
   }
+
   /*
   * FUNCAO: Carregar view principal do usuario empresa
   * TIPO: GET

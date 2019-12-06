@@ -16,6 +16,7 @@ class CreateVagasTable extends Migration
         Schema::create('vagas', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('empresa_id');
+            $table->integer('endereco_id')->nullable(); //novo
             $table->date('data_publicacao')->nullable();
             $table->string('nome_vaga')->nullable();
             $table->string('atribuicoes')->nullable();

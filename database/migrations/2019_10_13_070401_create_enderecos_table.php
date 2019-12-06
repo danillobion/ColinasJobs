@@ -17,6 +17,7 @@ class CreateEnderecosTable extends Migration
             $table->bigIncrements('id');
             $table->integer('candidato_id')->nullable();
             $table->integer('empresa_id')->nullable();
+            $table->integer('vaga_id')->nullable();
             $table->string('uf')->nullable();
             $table->string('cidade')->nullable();
             $table->string('bairro')->nullable();

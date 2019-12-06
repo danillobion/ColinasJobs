@@ -17,6 +17,9 @@ class Vaga extends Model
     public function favorito(){
       return $this->hasMany('App\Favorito');
     }
+    public function endereco(){ //novo
+        return $this->hasOne('App\Endereco', 'vaga_id');
+    }
 
     public function match(){
         return $this->hasMany('App\Match');
