@@ -1,19 +1,16 @@
 @extends('layouts.app')
+
 @section('content')
 
+<style>
+</style>
 <div class="container-fluid">
-    {{-- <div class="row">
-        <div class="col-md-12" style="background-color:blueviolet; width:100px; height:100px;">aaaa</div>
-    </div> --}}
     <div class="row justify-content-center" style="margin-top:100px;">
         <div class="col-sm-3">
 
-            <div>
-                @include('mensagens.mensagem')
-            </div>
             <div class="card" style="width:100%;">
-                    <div class="card-header">Minhas Oportunidades Cadastradas</div>
-                    <div class="card-body" >
+                <div class="card-header">Minhas Oportunidades Cadastradas</div>
+                <div class="card-body" >
                     @if (session('status'))
                     <div class="alert alert-success" role="alert">
                         {{ session('status') }}
@@ -23,113 +20,98 @@
                         <?php $i = 0; ?>
                         <ul style="height: 5rem;margin-top:1%; ">
                             <div style="margin-left:-40px;">
-                                    <?php $idTemp=0; ?>
-                            @foreach ($empresas as $item)
-                                @for($i = 0; $i < sizeof($item->vaga); $i++)
-                                    <?php
 
-                                        $idTemp++;
-                                        $idOpcaoDiv = 'opcao' . $idTemp;
+                                <!-- ordenar as vagas -->
+                                <?php
+                                    $vagas = $empresas[0]->vaga->sortByDesc('data_publicacao')->values();
+                                    $countVagas = $vagas->count();
+                                ?>
 
-                                    ?>
-                                    <div>
-                                        <button id="buttonMinhasVagas{{$idTemp}}" onclick="mostrarVaga('div_A',{{$idTemp}}, {{$item->vaga[$i]->id}})" class="button buttonCampo1">
-                                            <div style="margin-left:-5px; margin-bottom:30%; width:75%; height:5%; text-align: left;">
-                                                <a style="position:absolute; margin-left:180px;" onclick="mostrarOpcoes('{{$idOpcaoDiv}}')"><img src="icon/ellipsis-v-solid.svg" alt="curriculum" width="45px" height="20px"></a>
-                                                <p style="margin-bottom: -5px;">{{$item->vaga[$i]->nome_vaga}}</p>
-                                                <p style="margin-bottom: -5px;">{{$item->nome_empresa}}</p>
-                                                <p style="margin-bottom: -5px;">{{$item->vaga[$i]->endereco->cidade . "/". $item->vaga[$i]->endereco->uf}}</p>
-                                                {{-- <p style="margin-bottom: -5px;">{{$item->vaga[$i]->data_publicacao}}</p> --}}
-                                                <p style="margin-bottom: -5px;">{{$item->vaga[$i]->match->count()}}</p>
-                                                @foreach ($vagas as $item2)
-                                                    <p style="margin-bottom: -5px;">{{$item2->candidato_id}}</p>
-                                                @endforeach
-
-                                        </button>
-                                        <div id="{{$idOpcaoDiv}}" style="padding:5px; display:none;" role="group">
-                                            <a  href="{{ route('editarVaga', ['idEmpresa' => $item->vaga[$i]->empresa_id, 'idVaga' => $item->vaga[$i]->id ])}}" class="btn btn-primary btn-sm">Editar</a>
-                                            <a  href="{{ route('deletarVaga', ['idEmpresa' => $item->vaga[$i]->empresa_id, 'idVaga' => $item->vaga[$i]->id ])}}" class="btn btn-danger btn-sm">Deletar</a>
+                                <?php $idTemp=0; ?>
+                                @foreach ($vagas as $item)
+                                    <?php $idTemp++; ?>
+                                    <button id="buttonMinhasVagas{{$idTemp}}" class="button buttonCampo1" onclick="mostrarVaga('div_A',{{$idTemp}}, {{$item->id}})">
+                                        <div style="margin-left:-5px; margin-bottom:30%; width:75%; height:5%; text-align: left;">
+                                            <p style="margin-bottom: -5px;">{{$item->nome_vaga}}</p>
+                                            <p style="margin-bottom: -5px;">{{$item->empresa->nome_empresa}}</p>
+                                            <p style="margin-bottom: -5px;">{{$item->endereco->cidade . "/". $item->endereco->uf}}</p>
+                                            {{--<p style="margin-bottom: -5px;">{{$item->data_publicacao}}</p>--}}
+                                            <p style="margin-bottom: -5px;">{{$item->match->count()}}</p>
                                         </div>
-                                    </div>
-
-                                @endfor
-                                @if(sizeof($item->vaga) == 0)
-                                    <a href="{{ route('vaga') }}" class="button buttonCampo1 enabled-jobs">Você não possui nenhuma vaga cadastrada. Clique aqui para criar uma vaga.</a>
-                                @endif
-                            @endforeach
+                                    </button>
+                                    @if($countVagas == 0)
+                                        <a href="{{ route('vaga') }}" class="button buttonCampo1 enabled-jobs">Você não possui nenhuma vaga cadastrada. Clique aqui para criar uma vaga.</a>
+                                    @endif
+                                @endforeach
                             </div>
-                            @if(!is_null($empresas))
+                            @if(!is_null($empresas[0]->vaga))
                             @endif
                         </ul>
                     </div>
                     <input id="div_A" type="hidden" value="1">
                 </div>
             </div>
-
         </div>
-
         <div class="col-sm-6">
             <div class="card" style="height:100%">
                 <div class="card-header">Detalhes</div>
                 {{-- Detalhes da vaga --}}
-                        <?php $idTemp =0; ?>
-                        @if(!is_null($empresas))
-                            @foreach($empresas as $id)
-                                @for($i = 0; $i < sizeof($item->vaga); $i++)
-                                    <?php $idTemp++; ?>
-                                    <div class="card-body" style="display: none" id="vaga{{$idTemp}}">
-                                        <a style="font-size:25px;"> {{$item->vaga[$i]->nome_vaga}}</a> <br>
-                                        <a style="font-size:19px;"> {{$id->nome_empresa}}</a> <br>
-                                        <a> {{$item->vaga[$i]->endereco->cidade . "/". $item->vaga[$i]->endereco->uf}}</a> <br>
-                                        <a> <b>{{'Data de Publicação: '}}</b>{{$item->vaga[$i]->data_publicacao}}</a> <br>
-                                        <div class="btn-group">
-                                            <a> <b>{{'Número de Vagas: '}}</b>{{$item->vaga[$i]->quantidade}}</a>
-                                            @if($item->vaga[$i]->vaga_para_pcd == 1)
-                                                <a style="margin-left:5px;"> <b>{{'Vagas para PCD: '}}</b>Sim</a>
-                                            @else
-                                                <a style="margin-left:5px;"> <b>{{'Vagas para PCD: '}}</b>Não</a>
-                                            @endif
-                                        </div>
-                                        <div class="btn-group">
-                                            <a> <b>{{'Salário: '}}</b>{{'R$'}}{{$item->vaga[$i]->salario}}</a>
-                                            <a style="margin-left:5px;"> <b>{{'Tipo de vaga: '}}</b>{{$item->vaga[$i]->tipo_de_vaga}}</a>
-                                            <a style="margin-left:5px;"> <b>{{'Remuneração: '}}</b>{{$item->vaga[$i]->tipo_de_remuneracao}}</a>
-                                        </div>
 
-                                        <hr style="margin-top:2px;">
+                    <?php $idTemp =0; ?>
+                    @if(!is_null($vagas))
+                        @foreach($vagas as $itemVaga)
+                            <?php $idTemp++; ?>
+                            <div class="card-body" style="display: none" id="vaga{{$idTemp}}">
+                                <a style="font-size:25px;"> {{$itemVaga->nome_vaga}}</a> <br>
+                                <a style="font-size:19px;"> {{$itemVaga->empresa->nome_empresa}}</a> <br>
+                                <a> {{$itemVaga->endereco->cidade . "/". $itemVaga->endereco->uf}}</a> <br>
+                                <a> <b>{{'Data de Publicação: '}}</b>{{$itemVaga->data_publicacao}}</a> <br>
+                                <div class="btn-group">
+                                    <a> <b>{{'Número de Vagas: '}}</b>{{$itemVaga->quantidade}}</a>
+                                    @if($itemVaga->vaga_para_pcd == 1)
+                                        <a style="margin-left:5px;"> <b>{{'Vagas para PCD: '}}</b>Sim</a>
+                                    @else
+                                        <a style="margin-left:5px;"> <b>{{'Vagas para PCD: '}}</b>Não</a>
+                                    @endif
+                                </div>
+                                <div class="btn-group">
+                                    <a> <b>{{'Salário: '}}</b>{{'R$'}}{{$itemVaga->salario}}</a>
+                                    <a style="margin-left:5px;"> <b>{{'Tipo de vaga: '}}</b>{{$itemVaga->tipo_de_vaga}}</a>
+                                    <a style="margin-left:5px;"> <b>{{'Remuneração: '}}</b>{{$itemVaga->tipo_de_remuneracao}}</a>
+                                </div>
 
-                                        <div style="margin-left:5px; ">
-                                            <p style="font-size:20px;">Atribuições  </p><br>
-                                            <div style="margin-top:-45px; margin-left:-2px;">
-                                                <a style="margin-left:5px;">{{$item->vaga[$i]->atribuicoes}}</a>
-                                            </div>
-                                        </div><br>
+                                <hr style="margin-top:2px;">
 
-                                        <hr style="margin-top:2px;">
-
-                                        <div style="margin-left:5px; ">
-                                            <p style="font-size:20px;">Experiência  </p><br>
-                                            <div style="margin-top:-45px; margin-left:-2px;">
-                                                <a style="margin-left:5px;">{{$item->vaga[$i]->experiencia}}</a>
-                                            </div>
-                                        </div><br>
-
-                                        <hr style="margin-top:2px;">
-
-                                        <div style="margin-left:5px; ">
-                                            <p style="font-size:20px;">Descrição  </p><br>
-                                            <div style="margin-top:-45px; margin-left:-2pxwidth:490px;height:140px;">
-                                                <a style="margin-left:5px;">{{$item->vaga[$i]->descricao}}</a>
-                                            </div>
-                                        </div><br>
+                                <div style="margin-left:5px; ">
+                                    <p style="font-size:20px;">Atribuições  </p><br>
+                                    <div style="margin-top:-45px; margin-left:-2px;">
+                                        <a style="margin-left:5px;">{{$itemVaga->atribuicoes}}</a>
                                     </div>
-                                @endfor
-                            @endforeach
-                        @endif
+                                </div><br>
+
+                                <hr style="margin-top:2px;">
+
+                                <div style="margin-left:5px; ">
+                                    <p style="font-size:20px;">Experiência  </p><br>
+                                    <div style="margin-top:-45px; margin-left:-2px;">
+                                        <a style="margin-left:5px;">{{$itemVaga->experiencia}}</a>
+                                    </div>
+                                </div><br>
+
+                                <hr style="margin-top:2px;">
+
+                                <div style="margin-left:5px; ">
+                                    <p style="font-size:20px;">Descrição  </p><br>
+                                    <div style="margin-top:-45px; margin-left:-2pxwidth:490px;height:140px;">
+                                        <a style="margin-left:5px;">{{$itemVaga->descricao}}</a>
+                                    </div>
+                                </div><br>
+                            </div>
+                        @endforeach
+                    @endif
             </div>
         </div>
-
-        <div class="col-sm-3">
+       <div class="col-sm-3">
             <div class="card" style="height:100%">
                 <div class="card-header">Candidatos Interessados</div>
                 <div class="card-body">
@@ -140,34 +122,32 @@
                         @endif
                         <?php $idTemp=0; ?>
                         <?php $i = 0; ?>
-                        @foreach ($empresas as $item)
-                            @for($i = 0; $i < sizeof($item->vaga); $i++)
-                            <div id="curriculoVaga{{$item->vaga[$i]->id}}"  style="display: none; height: 37rem; margin-left:1px; overflow: auto; margin-top:1%; border: 1px solid #000; border-color:#e9e9e9; border-radius: 8px;">
-                            @for($j = 0; $j < sizeof($item->vaga[$i]->match); $j++)
-                                <ul style="height: 5rem;margin-top:1%; ">
-                                <div style="margin-left:-40px;">
-                                        <?php $idTemp++; ?>
-                                        <button id="buttonMeusCandidatos{{$idTemp}}" onclick="mostrarCurriculo({{$idTemp}})" class="button buttonCampo1" style="" data-toggle="modal" data-target="#modalExemplo">
-                                            <div style="margin-left:-5px; margin-bottom:30%; width:75%; height:5%; text-align: left;">
-                                                <p style="margin-bottom: -5px;">{{$item->vaga[$i]->match[$j]->candidato->nome_completo}}</p>
-                                                <p style="margin-bottom: -5px;">{{$item->vaga[$i]->match[$j]->candidato->funcao}}</p>
-                                                <p style="margin-bottom: -5px;">{{$item->vaga[$i]->match[$j]->candidato->tipo_de_deficiencia}}</p>
-                                            </div>
-                                        </button>
-                                </div>
-                                </ul>
+                        @foreach ($vagas as $item)
+                            <div id="curriculoVaga{{$item->id}}"  style="display: none; height: 37rem; margin-left:1px; overflow: auto; margin-top:1%; border: 1px solid #000; border-color:#e9e9e9; border-radius: 8px;">
+                            @for($j = 0; $j < sizeof($item->match); $j++)    
+                                @if($item->match[$j]->match == null && $item->match[$j]->empresa_id == null)
+                                    <ul style="height: 5rem;margin-top:1%; ">
+                                    <div style="margin-left:-40px;">
+                                            <?php $idTemp++; ?>
+                                            <button id="buttonMeusCandidatos{{$idTemp}}" onclick="mostrarCurriculo({{$idTemp}})" class="button buttonCampo1" style="" data-toggle="modal" data-target="#modalExemplo">
+                                                <div style="margin-left:-5px; margin-bottom:30%; width:75%; height:5%; text-align: left;">
+                                                    <p style="margin-bottom: -5px;">{{$item->match[$j]->candidato->nome_completo}}</p>
+                                                    <p style="margin-bottom: -5px;">{{$item->match[$j]->candidato->funcao}}</p>
+                                                    <p style="margin-bottom: -5px;">{{$item->match[$j]->candidato->tipo_de_deficiencia}}</p>
+                                                </div>
+                                            </button>
+                                    </div>
+                                    </ul>
+                                @endif
                             @endfor
                             </div>
-                            @endfor
                         @endforeach
-                                @if(!is_null($empresas))
-
-                                @endif
-                        <input id="div_B" type="hidden" value="1">
+                    @if(!is_null($vagas))
+                    @endif
+                    <input id="div_B" type="hidden" value="1">
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 {{-- MODAL --}}
