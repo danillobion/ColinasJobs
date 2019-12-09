@@ -119,4 +119,6 @@ Route::group(['middleware' => 'verifica_email'], function(){
 
         Route::post('/enviar/mail', 'EmailController@enviarEmail')->name('enviar_email');
 
+        Route::get('/lista/matches', 'MatchController@listarMatches')->name('listarMatches');
+
 });

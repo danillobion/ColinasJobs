@@ -90,6 +90,11 @@
                                                 <div style="margin-left:6px; margin-top:3px;">{{ __('Criar Vaga') }}</div>
                                             </div>
                                         </a>
+                                        <a class="dropdown-item" href="{{ route('listarMatches') }}">
+                                            <div class="btn-group">
+                                                <div style="margin-left:6px; margin-top:3px;">{{ __('Meus Matches') }}</div>
+                                            </div>
+                                        </a>
                                     <hr>
                                     @endif
 
