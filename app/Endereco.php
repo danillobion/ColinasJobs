@@ -17,5 +17,8 @@ class Endereco extends Model
     public function vaga(){ //novo
         return $this->hasOne('App\Vaga', 'id');
     }
+    public function candidato(){
+        return $this->belongsTo('App\Endereco', 'user_id');
+    }
 
 }
